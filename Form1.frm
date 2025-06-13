@@ -3,13 +3,80 @@ Object = "{831FDD16-0C5C-11D2-A9FC-0000F8754DA1}#2.2#0"; "mscomctl.OCX"
 Begin VB.Form Form1 
    Caption         =   "Form1"
    ClientHeight    =   7035
-   ClientLeft      =   60
-   ClientTop       =   405
-   ClientWidth     =   15615
+   ClientLeft      =   -30
+   ClientTop       =   1725
+   ClientWidth     =   11400
    LinkTopic       =   "Form1"
    ScaleHeight     =   7035
-   ScaleWidth      =   15615
-   StartUpPosition =   3  'Windows Default
+   ScaleWidth      =   11400
+   Begin VB.CommandButton btn_favoritos 
+      Caption         =   "Libros Favoritos"
+      BeginProperty Font 
+         Name            =   "MV Boli"
+         Size            =   12
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   855
+      Left            =   480
+      TabIndex        =   8
+      Top             =   5400
+      Width           =   2415
+   End
+   Begin VB.CommandButton btn_generos_favoritos 
+      Caption         =   "Generos Favoritos"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   855
+      Left            =   480
+      TabIndex        =   7
+      Top             =   4440
+      Width           =   2415
+   End
+   Begin VB.CommandButton btn_quiero 
+      Caption         =   "Quiero Leer"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   855
+      Left            =   480
+      TabIndex        =   6
+      Top             =   2520
+      Width           =   2415
+   End
+   Begin VB.CommandButton btn_no_gustar 
+      Caption         =   "No me gustaron"
+      BeginProperty Font 
+         Name            =   "MS Sans Serif"
+         Size            =   9.75
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   855
+      Left            =   480
+      TabIndex        =   5
+      Top             =   3480
+      Width           =   2415
+   End
    Begin VB.CommandButton btn_agregar 
       Caption         =   "Agregar"
       BeginProperty Font 
@@ -98,8 +165,7 @@ Private Sub CargarLibros(filtroSQL As String)
     Dim rs As ADODB.Recordset
     Dim sql As String
     
-    sql = "SELECT L.LibroID, L.Titulo, L.Autor, G.Nombre As Genero, L.Calificacion, L.PrestadoA" & _
-        "FROM Libros L INNER JOIN Generos G ON L.GeneroID = G.GeneroID"
+    sql = "SELECT L.LibroID, L.Titulo, L.Autor, G.Nombre As Genero, L.Calificacion, L.PrestadoA FROM Libros L INNER JOIN Generos G ON L.GeneroID = G.GeneroID"
         
     If filtroSQL <> "" Then
         sql = sql & " WHERE " & filtroSQL
@@ -110,13 +176,60 @@ Private Sub CargarLibros(filtroSQL As String)
     
     list_libros.ListItems.Clear
     
+    If Not rs.EOF Then
+        Dim item As ListItem
+        Do Until rs.EOF
+        
+            Set item = list_libros.ListItems.Add(, , rs!Titulo)
+            item.SubItems(1) = rs!Autor
+            item.SubItems(2) = rs!Genero
+            item.SubItems(3) = IIf(IsNull(rs!Calificacion), "", rs!Calificacion)
+            If rs!PrestadoA = True Then
+                item.SubItems(4) = rs!PrestadoA
+            Else
+                item.SubItems(4) = ""
+            End If
+            
+            item.Tag = rs!LibroID
+            
+            rs.MoveNext
+        
+        Loop
+    End If
     
+    rs.Close: Set rs = Nothing
     
 End Sub
 
 
+Private Sub btn_agregar_Click()
+    
+    frmLibro.Show vbModal
+End Sub
+
 Private Sub btn_catalogo_Click()
     CargarLibros ""
+End Sub
+
+
+Private Sub btn_favoritos_Click()
+    CargarLibros "L.Recomendado = 1"
+End Sub
+
+Private Sub btn_generos_favoritos_Click()
+    CargarLibros "G.esFavorito = 1"
+End Sub
+
+Private Sub btn_leiste_Click()
+    CargarLibros "L.Leido = 1"
+End Sub
+
+Private Sub btn_no_gustar_Click()
+    CargarLibros "L.Leido = 1 AND L.Calificacion <= 2"
+End Sub
+
+Private Sub btn_quiero_Click()
+    CargarLibros "L.PorLeer = 1"
 End Sub
 
 Private Sub Form_Load()
