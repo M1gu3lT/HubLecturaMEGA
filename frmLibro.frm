@@ -255,6 +255,15 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+
+
+
+
+
+
+
+
+
 Private Sub Combo1_Change()
 
 End Sub
@@ -300,5 +309,20 @@ Private Sub Form_Load()
     Loop
     
     rsG.Close: Set rsG = Nothing
+    
+    If EditandoID = 0 Then
+        ' Modo agregar, limpiar campos
+        txtTitulo.Text = ""
+        txtAutor = ""
+        cboGenero.ListIndex = -1 ' no hay nada seleccionado
+        txtCalificacion = ""
+        chkLeido.Value = 0
+        txtPrestadoA.Enabled = False
+        Me.Caption = "Agregar Libro"
+        
+    Else
+        
+    
+    End If
     
 End Sub
