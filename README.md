@@ -36,6 +36,7 @@ Este programa en Visual Basic se desarrolló siguiendo los pasos indicados duran
 
 
 ## Diagrama Entidad-Relacion
+![Entidad Relacion](evidencias/entidad-relacion.jpg)
 
 
 ## Problemas Conocidos
